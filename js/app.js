@@ -12,6 +12,9 @@ function initGame() {
 	gGamerPos = { i: 2, j: 9 };
 	gBoard = buildBoard();
 	renderBoard(gBoard);
+
+	 // Call addBall every 3 seconds (3000 milliseconds)
+	 setInterval(addBall, 3000);
 }
 
 
@@ -158,5 +161,30 @@ function getClassName(location) {
 	var cellClass = 'cell-' + location.i + '-' + location.j;
 	console.log('cellClass:', cellClass);
 	return cellClass;
+}
+
+function addBall() {
+    // Find an empty cell (FLOOR without any game element)
+    var emptyCells = [];
+    for (var i = 1; i < gBoard.length - 1; i++) {
+        for (var j = 1; j < gBoard[0].length - 1; j++) {
+            if (gBoard[i][j].type === FLOOR && gBoard[i][j].gameElement === null) {
+                emptyCells.push({ i: i, j: j });
+            }
+        }
+    }
+    
+    // If there are no empty cells, do nothing
+    if (emptyCells.length === 0) return;
+
+    // Pick a random empty cell
+    var randomIdx = Math.floor(Math.random() * emptyCells.length);
+    var randomCell = emptyCells[randomIdx];
+
+    // Place the ball in the random empty cell
+    gBoard[randomCell.i][randomCell.j].gameElement = BALL;
+
+    // Render the updated cell
+    renderCell(randomCell, BALL_IMG);
 }
 
