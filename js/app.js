@@ -8,13 +8,14 @@ var BALL_IMG = '<img src="img/ball.png" />';
 
 var gBoard;
 var gGamerPos;
+var gBallsCollected = 0;
 function initGame() {
 	gGamerPos = { i: 2, j: 9 };
 	gBoard = buildBoard();
 	renderBoard(gBoard);
 
-	 // Call addBall every 3 seconds (3000 milliseconds)
-	 setInterval(addBall, 3000);
+	// Call addBall every 3 seconds (3000 milliseconds)
+	setInterval(addBall, 3000);
 }
 
 
@@ -104,7 +105,12 @@ function moveTo(i, j) {
 
 		if (targetCell.gameElement === BALL) {
 			console.log('Collecting!');
+			// Update ball count and display
+			gBallsCollected++;
+			updateBallsCollectedDisplay();
 		}
+
+
 
 		// MOVING from current position
 		// Model:
@@ -122,6 +128,12 @@ function moveTo(i, j) {
 
 	} // else console.log('TOO FAR', iAbsDiff, jAbsDiff);
 
+}
+
+function updateBallsCollectedDisplay() {
+	// Update the HTML with the current number of balls collected
+	var elBallsCollected = document.querySelector('#balls-collected');
+	elBallsCollected.innerText = gBallsCollected;
 }
 
 // Convert a location object {i, j} to a selector and render a value in that element
@@ -164,27 +176,27 @@ function getClassName(location) {
 }
 
 function addBall() {
-    // Find an empty cell (FLOOR without any game element)
-    var emptyCells = [];
-    for (var i = 1; i < gBoard.length - 1; i++) {
-        for (var j = 1; j < gBoard[0].length - 1; j++) {
-            if (gBoard[i][j].type === FLOOR && gBoard[i][j].gameElement === null) {
-                emptyCells.push({ i: i, j: j });
-            }
-        }
-    }
-    
-    // If there are no empty cells, do nothing
-    if (emptyCells.length === 0) return;
+	// Find an empty cell (FLOOR without any game element)
+	var emptyCells = [];
+	for (var i = 1; i < gBoard.length - 1; i++) {
+		for (var j = 1; j < gBoard[0].length - 1; j++) {
+			if (gBoard[i][j].type === FLOOR && gBoard[i][j].gameElement === null) {
+				emptyCells.push({ i: i, j: j });
+			}
+		}
+	}
 
-    // Pick a random empty cell
-    var randomIdx = Math.floor(Math.random() * emptyCells.length);
-    var randomCell = emptyCells[randomIdx];
+	// If there are no empty cells, do nothing
+	if (emptyCells.length === 0) return;
 
-    // Place the ball in the random empty cell
-    gBoard[randomCell.i][randomCell.j].gameElement = BALL;
+	// Pick a random empty cell
+	var randomIdx = Math.floor(Math.random() * emptyCells.length);
+	var randomCell = emptyCells[randomIdx];
 
-    // Render the updated cell
-    renderCell(randomCell, BALL_IMG);
+	// Place the ball in the random empty cell
+	gBoard[randomCell.i][randomCell.j].gameElement = BALL;
+
+	// Render the updated cell
+	renderCell(randomCell, BALL_IMG);
 }
 
