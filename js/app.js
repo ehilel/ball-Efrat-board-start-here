@@ -9,13 +9,15 @@ var BALL_IMG = '<img src="img/ball.png" />';
 var gBoard;
 var gGamerPos;
 var gBallsCollected = 0;
+var gTotalBalls = 2;
+var addBallInterval;
 function initGame() {
 	gGamerPos = { i: 2, j: 9 };
 	gBoard = buildBoard();
 	renderBoard(gBoard);
 
-	// Call addBall every 3 seconds (3000 milliseconds)
-	setInterval(addBall, 3000);
+	// Call addBall every 5 seconds 
+	addBallInterval = setInterval(addBall, 5000);
 }
 
 
@@ -105,9 +107,13 @@ function moveTo(i, j) {
 
 		if (targetCell.gameElement === BALL) {
 			console.log('Collecting!');
+
 			// Update ball count and display
 			gBallsCollected++;
 			updateBallsCollectedDisplay();
+
+			// Check if the player won after collecting a ball
+			checkVictory();
 		}
 
 
@@ -134,6 +140,18 @@ function updateBallsCollectedDisplay() {
 	// Update the HTML with the current number of balls collected
 	var elBallsCollected = document.querySelector('#balls-collected');
 	elBallsCollected.innerText = gBallsCollected;
+}
+
+function checkVictory() {
+	// If the player has collected all the balls
+	if (gBallsCollected === gTotalBalls) {
+		alert('Congratulations! You have collected all the balls!');
+
+		// Stop adding new balls
+		clearInterval(addBallInterval);
+		gBallsCollected = 0;
+		gTotalBalls = 2;
+	}
 }
 
 // Convert a location object {i, j} to a selector and render a value in that element
@@ -195,8 +213,13 @@ function addBall() {
 
 	// Place the ball in the random empty cell
 	gBoard[randomCell.i][randomCell.j].gameElement = BALL;
-
+	gTotalBalls++; // Update total ball count
 	// Render the updated cell
 	renderCell(randomCell, BALL_IMG);
+}
+
+function restartGame() {
+	clearInterval(addBallInterval);
+	initGame();
 }
 
