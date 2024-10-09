@@ -52,7 +52,15 @@ function buildBoard() {
 	board[3][8].gameElement = BALL;
 	board[7][4].gameElement = BALL;
 
-	console.log(board);
+	// Horizontal passage אופקי
+    board[3][0].type = FLOOR; // Opening left
+    board[4][11].type = FLOOR; // Opening right
+
+    // Vertical passage אנכי
+	board[0][3].type = FLOOR; // Opening up
+    board[9][7].type = FLOOR; // Opening down
+    
+	//console.log(board);
 	return board;
 }
 
@@ -86,14 +94,28 @@ function renderBoard(board) {
 		strHTML += '</tr>\n';
 	}
 
-	console.log('strHTML is:');
-	console.log(strHTML);
+	//console.log('strHTML is:');
+	//console.log(strHTML);
 	var elBoard = document.querySelector('.board');
 	elBoard.innerHTML = strHTML;
 }
 
 // Move the player to a specific location
 function moveTo(i, j) {
+	if (i === 3 && j === 0) {
+		i = 4;
+        j = 11;
+    } else if (i === 4 && j === 11) {
+	    i = 3;
+        j = 0;
+    }
+    if (i === 0 && j === 3) {
+        i = 9;
+		j = 7;
+    } else if (i === 9 && j === 7) {
+        i = 0;
+		j = 3;
+    }
 
 	var targetCell = gBoard[i][j];
 	if (targetCell.type === WALL) return;
@@ -101,9 +123,12 @@ function moveTo(i, j) {
 	// Calculate distance to make sure we are moving to a neighbor cell
 	var iAbsDiff = Math.abs(i - gGamerPos.i);
 	var jAbsDiff = Math.abs(j - gGamerPos.j);
+	console.log(333, iAbsDiff);
+	console.log(333, jAbsDiff);
 
 	// If the clicked Cell is one of the four allowed
-	if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0)) {
+	if ((iAbsDiff === 1 && jAbsDiff === 0) || (jAbsDiff === 1 && iAbsDiff === 0) ||
+	(i === 3 && j === 0) || (i === 4 && j === 11) || (i === 0 && j === 3) || (i === 9 && j === 7)) {
 
 		if (targetCell.gameElement === BALL) {
 			console.log('Collecting!');
@@ -115,8 +140,6 @@ function moveTo(i, j) {
 			// Check if the player won after collecting a ball
 			checkVictory();
 		}
-
-
 
 		// MOVING from current position
 		// Model:
